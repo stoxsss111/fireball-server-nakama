@@ -1,11 +1,13 @@
 local nk = require("nakama")
 
+
+
 -- Название матча
 local function match_init(context, params)
     local now = os.time()
     local state = {
         start_time = params.start_time or now,
-        end_time = (params.start_time or now) + (params.duration or 600),
+        duration = params.duration,
         teams = {
             {players = {}, score = 0},
             {players = {}, score = 0}
@@ -14,6 +16,7 @@ local function match_init(context, params)
         bots = {},
         messages = {},
         match_params = params
+      
     }
 
     return state, 1, "basic_match" -- <== важно: ТРЕТИЙ аргумент — СТРОКА
@@ -27,6 +30,7 @@ local function match_join_attempt(context, dispatcher, tick, state, presence, me
 	--   username = "user's unique username",
 	--   node = "name of the Nakama node the user is connected to"
 	-- }
+  
 	return state, true
   end
 
@@ -59,6 +63,20 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
+  
+  local elapsed_time = os.time() - state.start_time
+
+  local TickData = {
+    total_seconds = state.duration,
+    elapsed_seconds = elapsed_time
+  }
+
+  dispatcher.broadcast_message(1, nk.json_encode(TickData), nil, nil)
+
+  --[Длительность матча]
+    if elapsed_time >= state.duration then
+        return nil  -- Завершаем матч
+    end
     return state
 end
 

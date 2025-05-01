@@ -11,7 +11,7 @@ function M.create_match()
         start_time = os.time(),
         max_players = 20,
         team_size = 10,
-        duration = 600,
+        duration = 60,
         min_players = 2
     }
 

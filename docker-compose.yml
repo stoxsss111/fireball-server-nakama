@@ -2,22 +2,23 @@ version: '3'
 services:
   postgres:
     container_name: postgres
-    image: postgres:16-alpine
+    image: postgres:12.2-alpine
     environment:
       - POSTGRES_DB=railway
-      - POSTGRES_PASSWORD=localdbBtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
+      - POSTGRES_PASSWORD=BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
       - POSTGRES_USER=postgres
     volumes:
-      - data:/var/lib/postgresql/data
-    expose:
-      - "5432"
+      - pg_data:/var/lib/postgresql/data
+    command: >
+      sh -c "chown -R postgres:postgres /var/lib/postgresql/data && docker-entrypoint.sh postgres"
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "nakama"]
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "railway"]
       interval: 3s
       timeout: 3s
       retries: 5
+
   nakama:
     container_name: nakama
     image: registry.heroiclabs.com/heroiclabs/nakama:3.22.0
@@ -25,19 +26,14 @@ services:
       - "/bin/sh"
       - "-ecx"
       - >
-          sleep 5 &&
-          /nakama/nakama migrate up --database.address ${postgresql://postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres.railway.internal:5432/railway} &&
-          exec /nakama/nakama --name nakama1 --database.address ${postgresql://postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres.railway.internal:5432/railway} --logger.level DEBUG --session.token_expiry_sec 7200
+          /nakama/nakama migrate up --database.address postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres:5432/railway &&
+          exec /nakama/nakama --name nakama1 --database.address postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres:5432/railway --logger.level DEBUG --session.token_expiry_sec 7200
     restart: always
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./:/nakama/data
-    expose:
-      - "7349"
-      - "7350"
-      - "7351"
     ports:
       - "7349:7349"
       - "7350:7350"
@@ -47,7 +43,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    environment:
-      - ENABLE_ALPINE_PRIVATE_NETWORKING=true
+
 volumes:
-  data:
+  pg_data:

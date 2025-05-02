@@ -1,13 +1,13 @@
 global:
   scrape_interval: 15s
-  evaluation_interval: 15s
-
-scrape_configs:
-  - job_name: prometheus
-    static_configs:
-      - targets: ["localhost:9090"]
-
-  - job_name: nakama
-    metrics_path: /
-    static_configs:
-      - targets: ["nakama:9100"]
+name: "nakama1"
+database:
+  address: ["root@cockroachdb:26257"]
+logger:
+  level: "DEBUG"
+session:
+  token_expiry_sec: 7200
+metrics:
+  prometheus_port: 9100
+runtime:
+  path: "/nakama/data/modules"

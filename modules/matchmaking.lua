@@ -11,8 +11,9 @@ function M.create_match()
         start_time = os.time(),
         max_players = 20,
         team_size = 10,
-        duration = 60,
-        min_players = 2
+        duration = 600,
+        min_players = 10,
+        player_join_time = 60
     }
 
     local match_id = nk.match_create(match_module, params)
@@ -33,7 +34,7 @@ function M.find_match(context, payload)
     local suitable_match = nil
 
     for _, match in ipairs(matches) do
-        local age_ok = match.create_time and ((current_time - match.create_time) <= 60)
+        local age_ok = match.start_time and ((current_time - match.start_time) <= match.player_join_time)
         local has_space = match.size and match.max_size and (match.size < match.max_size)
 
         if age_ok and has_space then

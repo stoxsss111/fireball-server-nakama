@@ -13,8 +13,10 @@ local function match_init(context, params)
             {players = {}, score = 0}
         },
         players = {},
+        players_count = 0,
         bots = {},
         messages = {},
+        player_add_time = params.player_join_time,
         match_params = params
       
     }
@@ -36,6 +38,7 @@ local function match_join_attempt(context, dispatcher, tick, state, presence, me
 
 -- Подтверждение входа игрока
 local function match_join(context, dispatcher, tick, state, presences)
+  nk.logger_info("Игрок тут📦" .. #presences)
     return state
 end
 
@@ -63,6 +66,7 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
+  
   
   local elapsed_time = os.time() - state.start_time
 

@@ -21,11 +21,11 @@ services:
   nakama:
     image: registry.heroiclabs.com/heroiclabs/nakama:3.22.0
     environment:
-      - DB_HOST=postgres.railway.internal   # 🟢 это хост
-      - DB_PORT=5432                        # 🟢 стандартный порт PostgreSQL
-      - DB_NAME=railway                     # 🟢 имя базы
-      - DB_USER=postgres                    # 🟢 имя пользователя
-      - DB_PASSWORD=KYcBjTjlnxsIJAfTsVmdFcHbqixvqLlr
+      - DB_HOST=postgres.railway.internal
+      - DB_PORT=5432
+      - DB_NAME=railway
+      - DB_USER=postgres
+      - DB_PASSWORD=BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
     entrypoint:
     - "/bin/sh"
     - "-ecx"

@@ -26,8 +26,8 @@ services:
       - "-ecx"
       - >
           sleep 5 &&
-          /nakama/nakama migrate up --database.address ${DATABASE_URL} &&
-          exec /nakama/nakama --name nakama1 --database.address ${DATABASE_URL} --logger.level DEBUG --session.token_expiry_sec 7200
+          /nakama/nakama migrate up --database.address ${postgresql://postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres.railway.internal:5432/railway} &&
+          exec /nakama/nakama --name nakama1 --database.address ${postgresql://postgres:BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn@postgres.railway.internal:5432/railway} --logger.level DEBUG --session.token_expiry_sec 7200
     restart: always
     depends_on:
       postgres:

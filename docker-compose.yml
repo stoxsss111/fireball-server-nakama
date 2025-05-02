@@ -5,7 +5,7 @@ services:
     image: postgres:12.2-alpine
     environment:
       - POSTGRES_DB=railway
-      - POSTGRES_PASSWORD=BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
+      - POSTGRES_PASSWORD=localdbBtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
     volumes:
       - data:/var/lib/postgresql/data
     expose:

@@ -2,18 +2,17 @@ version: '3'
 services:
   postgres:
     container_name: postgres
-    image: postgres:12.2-alpine
+    image: postgres:16-alpine
     environment:
       - POSTGRES_DB=railway
       - POSTGRES_PASSWORD=localdbBtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
+      - POSTGRES_USER=postgres
     volumes:
       - data:/var/lib/postgresql/data
     expose:
-      - "8080"
       - "5432"
     ports:
       - "5432:5432"
-      - "8080:8080"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-d", "nakama"]
       interval: 3s
@@ -26,11 +25,10 @@ services:
       - "/bin/sh"
       - "-ecx"
       - >
-          /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama &&
-          exec /nakama/nakama --name nakama1 --database.address postgres:localdb@postgres:5432/nakama --logger.level DEBUG --session.token_expiry_sec 7200          
+          sleep 5 &&
+          /nakama/nakama migrate up --database.address ${DATABASE_URL} &&
+          exec /nakama/nakama --name nakama1 --database.address ${DATABASE_URL} --logger.level DEBUG --session.token_expiry_sec 7200
     restart: always
-    links:
-      - "postgres:db"
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,5 +47,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    environment:
+      - ENABLE_ALPINE_PRIVATE_NETWORKING=true
 volumes:
   data:

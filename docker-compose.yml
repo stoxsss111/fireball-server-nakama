@@ -21,24 +21,24 @@ services:
   nakama:
     image: registry.heroiclabs.com/heroiclabs/nakama:3.22.0
     entrypoint:
-      - "/bin/sh"
-      - "-ecx"
-      - >
-          /nakama/nakama migrate up --database.address root@cockroachdb:26257 && \
-            exec /nakama/nakama \
-              --name nakama1 \
-              --database.address root@cockroachdb:26257 \
-              --logger.level DEBUG \
-              --session.token_expiry_sec 7200 \
-              --metrics.prometheus_port 9100 \
-              --console.address 0.0.0.0 \
-              --console.port 7351 \
-              --console.username admin \
-              --console.password password \
-              --runtime.http_key "defaulthttpkey" \
-              --socket.server_key "defaultkey" \
-              --session.encryption_key "defaultencryptionkey" \
-              --runtime.env "production"
+    - "/bin/sh"
+    - "-ecx"
+    - >
+        /nakama/nakama migrate up --database.address root@cockroachdb:26257 && \
+          exec /nakama/nakama \
+            --name nakama1 \
+            --database.address root@cockroachdb:26257 \
+            --logger.level DEBUG \
+            --session.token_expiry_sec 7200 \
+            --metrics.prometheus_port 9100 \
+            --console.address 0.0.0.0 \
+            --console.port 7351 \
+            --console.username admin \
+            --console.password password \
+            --console.signing_key "default_signing_key" \
+            --runtime.http_key "defaulthttpkey" \
+            --socket.server_key "defaultkey" \
+            --session.encryption_key "defaultencryptionkey"
     restart: "no"
     links:
       - "cockroachdb:db"

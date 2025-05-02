@@ -1,0 +1,21 @@
+name: nakama1
+database:
+  address: ["root@cockroachdb:26257"]
+logger:
+  level: "DEBUG"
+session:
+  token_expiry_sec: 7200
+  encryption_key: "defaultencryptionkey"
+socket:
+  server_key: "defaultkey"
+runtime:
+  http_key: "defaulthttpkey"
+  env: "production"
+console:
+  address: "0.0.0.0"
+  port: 7351
+  username: "admin"
+  password: "password"
+  token_expiry_sec: 86400
+metrics:
+  prometheus_port: 9100

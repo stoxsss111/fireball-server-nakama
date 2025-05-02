@@ -11,6 +11,10 @@ socket:
 runtime:
   http_key: "defaulthttpkey"
   env: "production"
+  # Add this to enable serving static files:
+  path: "/nakama/data/modules"
+  http_host: "0.0.0.0"
+  http_port: 7351
 console:
   address: "0.0.0.0"
   port: 7351

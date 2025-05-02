@@ -31,8 +31,11 @@ services:
               --logger.level DEBUG \
               --session.token_expiry_sec 7200 \
               --metrics.prometheus_port 9100 \
-             
-   
+              --console.address 0.0.0.0 \
+              --console.port 7351 \
+              --runtime.http_key "defaulthttpkey" \
+              --socket.server_key "defaultkey" \
+              --session.encryption_key "defaultencryptionkey"
     restart: "no"
     links:
       - "cockroachdb:db"
@@ -52,6 +55,7 @@ services:
       - "7349:7349"
       - "7350:7350"
       - "7351:7351"
+      - "9100:9100"
     healthcheck:
       test: ["CMD", "/nakama/nakama", "healthcheck"]
       interval: 10s

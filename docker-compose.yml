@@ -4,8 +4,11 @@ services:
     container_name: postgres
     image: postgres:12.2-alpine
     environment:
-      - POSTGRES_DB=nakama
-      - POSTGRES_PASSWORD=localdb
+    - DB_HOST=postgres.railway.internal
+    - DB_PORT=5432
+    - DB_NAME=railway
+    - DB_USER=postgres
+    - DB_PASSWORD=BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn
     volumes:
       - data:/var/lib/postgresql/data
     expose:

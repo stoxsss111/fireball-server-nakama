@@ -1,9 +1,7 @@
 name: nakama1
 database:
-  address: ["postgres.railway.internal:5432"]
-  user: "postgres"
-  password: "BtfCgCSjQPOhTrveAuyEOVTTUhzYSirn"    # Используй свой пароль из Railway
-  name: "railway"  # Имя базы, которое ты создавал в Railway
+  address: [""postgresql://username:password@hostname:5432/database_name?sslmode=require""]
+   # Имя базы, которое ты создавал в Railway
 logger:
   level: "DEBUG"
 session:

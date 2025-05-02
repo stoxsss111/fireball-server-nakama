@@ -39,6 +39,7 @@ services:
             --runtime.http_key "defaulthttpkey" \
             --socket.server_key "defaultkey" \
             --session.encryption_key "defaultencryptionkey"
+    restart: unless-stopped 
     restart: "no"
     links:
       - "cockroachdb:db"

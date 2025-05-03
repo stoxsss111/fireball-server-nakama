@@ -47,14 +47,12 @@ function M.find_match(context, payload)
 
     for _, match in ipairs(matches) do
         nk.logger_info("🧪 Проверка матча: " .. nk.json_encode(match))
-        local age_ok = match.start_time and ((current_time - match.start_time) <= match.player_join_time)
         local label = nk.json_decode(match.label)
-    
-    -- Корректный вывод значения isPrivate
-    nk.logger_info("🧪Возраст матча подходит: " .. tostring(label.isPrivate))
-        
-        local has_space = match.size and match.max_size and (match.size < match.max_size)
-        nk.logger_info("🧪В матче есть место: " .. tostring(match.max_size))
+
+        local age_ok = label.join_time and ((current_time - label.join_time) <= label.join_time)
+        nk.logger_info("🧪В матче есть место: " .. tostring(age_ok))
+        local has_space = match.size and label.required_size and (match.size < label.required_size)
+        nk.logger_info("🧪В матче есть место: " .. tostring(has_space))
 
         if age_ok and has_space then
             suitable_match = match

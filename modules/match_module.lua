@@ -6,14 +6,16 @@ local nk = require("nakama")
 local function match_init(context, params)
     local now = os.time()
 
-local is_private = false  -- или получить значение из другого источника
+local join_time = now  -- или получить значение из другого источника
 local player_count = 0    -- или получить значение из другого источника
-local required_player_count = 2  -- или получить значение из другого источника
+local required_size = 2 
+local required_join_time = 60 -- Default value or obtain from another source
 
 local label = nk.json_encode({ 
-    isPrivate = is_private, 
+    join_time = join_time, 
     playerCount = player_count, 
-    requiredPlayerCount = required_player_count 
+    required_size = required_size,
+    required_join_time = required_join_time
 })
 
     local state = {
@@ -26,12 +28,9 @@ local label = nk.json_encode({
         players = {},
         players_count = 0,
         bots = {},
-        messages = {},
-        player_join_time = max_time_to_add,
-        match_params = params,
-        is_private = true, 
-        player_count = 0,
-        required_player_count = 2   
+        messages = {}
+        
+      
     }
 
     return state, 1, label -- <== важно: ТРЕТИЙ аргумент — СТРОКА

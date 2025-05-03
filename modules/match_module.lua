@@ -5,6 +5,17 @@ local nk = require("nakama")
 -- Название матча
 local function match_init(context, params)
     local now = os.time()
+
+local is_private = false  -- или получить значение из другого источника
+local player_count = 0    -- или получить значение из другого источника
+local required_player_count = 2  -- или получить значение из другого источника
+
+local label = nk.json_encode({ 
+    isPrivate = is_private, 
+    playerCount = player_count, 
+    requiredPlayerCount = required_player_count 
+})
+
     local state = {
         start_time = params.start_time or now,
         duration = params.duration,
@@ -16,12 +27,14 @@ local function match_init(context, params)
         players_count = 0,
         bots = {},
         messages = {},
-        player_add_time = params.player_join_time,
-        match_params = params
-      
+        player_join_time = max_time_to_add,
+        match_params = params,
+        is_private = true, 
+        player_count = 0,
+        required_player_count = 2   
     }
 
-    return state, 1, "basic_match" -- <== важно: ТРЕТИЙ аргумент — СТРОКА
+    return state, 1, label -- <== важно: ТРЕТИЙ аргумент — СТРОКА
 end
 
 local function match_join_attempt(context, dispatcher, tick, state, presence, metadata)

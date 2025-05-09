@@ -11,31 +11,45 @@ function M.setup_account(context, payload)
         return nk.json_encode({ success = false, error = "Invalid JSON" })
     end
 
+local meta = nk.json_encode(data)
+
+local player = {
+    name = "Alex",
+    health = 100,
+    level = 5
+}
+
 local user_id = context.user_id
+local metadata = player
 local username = data.username
+local display_name = data.display_name
+local timezone = "lalalal"
+local location = data.location
+local language = "Russian"
 local avatar_url = data.avatar_url
-local user_country = data.country or "US"
-local display_name = data.displayName or "hero"
 
 nk.logger_info(tostring(data.username) .. " has been set up.")
 
 -- Собираем метаданные
 local data = {
     avatar_url = avatar_url,
-    country = user_country,
+    location = location,
     level = 1,
     score = 0
 }
 
 -- Преобразуем таблицу в JSON-строку
-local metadata = nk.json_encode(data)
 
 -- Обновляем аккаунт
 nk.account_update_id(
     user_id,
-    data,-- Идентификатор пользователя
-    username,         -- Новый никнейм
-    display_name -- Метаданные в виде строки JSON
+    metadata,-- Идентификатор пользователя
+    username,       -- Новый никнейм
+    display_name,
+    timezone,
+    location,
+    language,
+    avatar_url -- Метаданные в виде строки JSON
 )
 
 end
@@ -63,7 +77,7 @@ function M.delete_user_data(context, payload)
     -- Сброс метаданных аккаунта
     local metadata = {
             avatar_url = "",
-            country = "",
+            country = "CA",
             level = 1,
             score = 0
     }

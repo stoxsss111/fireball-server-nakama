@@ -6,8 +6,6 @@ local M = {}
 -- Вспомогательная функция: создаёт матч и возвращает match_id
 function M.create_match()
 
-
-
     local params = {
         start_time = os.time(),
         max_players = 20,
@@ -50,9 +48,8 @@ function M.find_match(context, payload)
         local label = nk.json_decode(match.label)
 
         local age_ok = label.join_time and ((current_time - label.join_time) <= label.join_time)
-        nk.logger_info("🧪В матче есть место: " .. tostring(age_ok))
         local has_space = match.size and label.required_size and (match.size < label.required_size)
-        nk.logger_info("🧪В матче есть место: " .. tostring(has_space))
+    
 
         if age_ok and has_space then
             suitable_match = match

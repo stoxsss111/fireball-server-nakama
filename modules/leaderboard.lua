@@ -2,6 +2,9 @@ local nk = require("nakama")
 
 local M = {}
 
+
+
+
     function M.CreateLeaderboard()
         local id = "hour_active"
         local authoritative = false
@@ -12,9 +15,12 @@ local M = {}
             weather_conditions = "rain"
         }
         nk.leaderboard_create(id, authoritative, sort, operator, reset, metadata)
+        
+      
     end
 
     M.CreateLeaderboard()
+   
 
     function M.DecayInactiveScores()
         local leaderboard_id = "hour_active"
@@ -22,6 +28,7 @@ local M = {}
         local one_hour = 60 * 60
         local limit = 10000
         local cursor = nil
+        
 
         repeat
             local result = nk.leaderboard_records_list(leaderboard_id, {}, limit, cursor)

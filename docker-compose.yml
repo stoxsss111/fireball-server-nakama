@@ -29,8 +29,8 @@ services:
           exec /nakama/nakama --name nakama1 --database.address postgres:localdb@postgres:5432/nakama --logger.level DEBUG --runtime.http_key defaultkey    restart: always
   
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
+       
     volumes:
       - ./:/nakama/data
     ports: 

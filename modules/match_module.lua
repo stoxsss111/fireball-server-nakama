@@ -1,10 +1,10 @@
 local nk = require("nakama")
 
 
-
 -- Название матча
 local function match_init(context, params)
     local now = os.time()
+  
 
 local join_time = now  -- или получить значение из другого источника
 local player_count = 0    -- или получить значение из другого источника
@@ -81,6 +81,7 @@ local function match_loop(context, dispatcher, tick, state, messages)
   
   
   local elapsed_time = os.time() - state.start_time
+ 
 
   local TickData = {
     total_seconds = state.duration,

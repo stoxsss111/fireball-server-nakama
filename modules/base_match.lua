@@ -42,8 +42,41 @@ end
 
 local function match_leave(context, dispatcher, tick, state, presences)
     for _, presence in ipairs(presences) do
-        nk.logger_info("🔎Игрок удалился".. presence.user_id)
+        nk.logger_info("👋 Игрок покидает матч: " .. presence.user_id)
+
+        nk.logger_info("🔎 Ищем рекорд в лидерборде для пользователя: " .. presence.user_id)
+        local result = nk.leaderboard_records_list("hour_active", {presence.user_id}, 1, nil)
+        nk.logger_info("🧪 result (leaderboard_records_list): " .. nk.json_encode(result))
+
+        local record
+
+        if result and #result > 0 then
+            record = result[1]
+            nk.logger_info("✅ Рекорд найден:")
+            nk.logger_info("🏅 user_id: " .. record.owner_id)
+            nk.logger_info("🏷️ username: " .. record.username)
+            nk.logger_info("📊 score: " .. record.score)
+            nk.logger_info("🥇 rank: " .. record.rank)
+            nk.logger_info("📦 metadata: " .. nk.json_encode(record.metadata))
+        else
+            nk.logger_info("⚠️ Рекорд не найден, сохраняем пустую запись в backup.")
+            record = {} -- или nil, если так логичнее
+        end
+
+        nk.logger_info("💾 Сохраняем резервную копию в хранилище...")
+        nk.storage_write({
+            {
+                collection = "active_leaderboard_backup",
+                key = "player_data",
+                user_id = presence.user_id, -- 👈 здесь тоже лучше presence.user_id
+                value = record
+            }
+        })
+
+        nk.logger_info("🗑️ Удаляем игрока из лидерборда: " .. presence.user_id)
+        nk.leaderboard_record_delete("hour_active", presence.user_id)
     end
+
     return state
 end
 

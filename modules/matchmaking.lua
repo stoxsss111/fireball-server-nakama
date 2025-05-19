@@ -8,7 +8,7 @@ function M.create_match()
 
     local params = {
         start_time = os.time(),
-        max_players = 20,
+        max_players = 2,
         team_size = 10,
         duration = 600,
         min_players = 10,

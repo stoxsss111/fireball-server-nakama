@@ -22,26 +22,15 @@ end
 
 
 local function match_join(context, dispatcher, tick, state, presences)
-    nk.logger_info("Игрокиииииииииииииии тут📦" .. #presences)
-
     for _, presence in ipairs(presences) do
-        nk.logger_info("👋 Игрок входит в матч: " .. presence.user_id)
-
-        nk.logger_info("🔎 Ищем рекорд в лидерборде для пользователя: " .. presence.user_id)
-        --local result = nk.leaderboard_records_list("hour_active", {presence.user_id}, 1, nil)
-        
-
-        nk.logger_info("💾 💾 Заагрузжаем резервную копию из хранилищя...")
         local result = nk.storage_read({
             {
                 collection = "active_leaderboard_backup",
                 key = "player_data",
-                user_id = presence.user_id, -- 👈 здесь тоже лучше presence.user_id
+                user_id = presence.user_id, 
             }
         })
-
-        --local record
-
+        
         if result and #result > 0 then
             for i, entry in ipairs(result) do
                 nk.logger_info("🔍 Резервная запись #" .. i)

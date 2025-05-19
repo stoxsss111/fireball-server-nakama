@@ -18,6 +18,24 @@ services:
       timeout: 3s
       retries: 5
 
+  minio:
+    container_name: minio
+    image: minio/minio:latest
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
   nakama:
     container_name: nakama
     image: registry.heroiclabs.com/heroiclabs/nakama:3.22.0
@@ -26,11 +44,16 @@ services:
       - "-ecx"
       - >
           /nakama/nakama migrate up --database.address postgres:localdb@postgres:5432/nakama &&
-          exec /nakama/nakama --name nakama1 --database.address postgres:localdb@postgres:5432/nakama --logger.level DEBUG --runtime.http_key defaultkey    restart: always
-  
+          exec /nakama/nakama --name nakama1 --database.address postgres:localdb@postgres:5432/nakama --logger.level DEBUG --runtime.http_key defaultkey
+    restart: always
+    environment:
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_USE_SSL=false
     depends_on:
       - postgres
-       
+      - minio
     volumes:
       - ./:/nakama/data
     ports: 
@@ -45,3 +68,4 @@ services:
 
 volumes:
   pg_data:
+  minio_data:

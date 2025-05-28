@@ -11,15 +11,16 @@ function M.setup_account(context, payload)
         return nk.json_encode({ success = false, error = "Invalid JSON" })
     end
 
-    local meta = nk.json_encode(data)
+    --local metaa = nk.json_encode(data)
 
-    local player = {
-        
+    local meta = {
+        is_bot = true
     }
+ 
 
     local user_id = context.user_id
+    local metadata = meta
     local username = data.username
-    local metadata = player
     local display_name = data.display_name
     local timezone = ""
     local location = data.location
@@ -65,13 +66,13 @@ function M.delete_user_data(context, payload)
     nk.storage_delete(user_id, "settings", "user_settings")
 
     -- Сброс метаданных аккаунта
-    local metadata = {
+    local metadata_to_change = {
         avatar_url = "",
         country = "CA",
         level = 1,
         score = 0
     }
-    nk.account_update_id(user_id, nil, metadata)
+    nk.account_update_id(user_id, nil, metadata_to_change)
 
     return {success = true}
 end

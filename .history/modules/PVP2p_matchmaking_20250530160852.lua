@@ -20,9 +20,10 @@ local function get_random_users(context, payload)
     return nk.json_encode({ users = users })
 end
 
-local function create_match()
-    match_id = nk.match_create(match_module)
-    return match_id
+local function create_match(context, payload)
+  local match_id = match_module -- имя, возвращаемое из match_init
+  nk.logger_info("✅ Матч создан: " .. match_id)
+  return nk.json_encode({ match_id = match_id })
 end
 
 nk.register_rpc(get_random_users, "get_random_users")

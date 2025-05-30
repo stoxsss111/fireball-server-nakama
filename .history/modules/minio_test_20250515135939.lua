@@ -34,7 +34,7 @@ local function check_bucket()
 end
 
 -- 🚀 Run
---local success, err = pcall(check_bucket)
---if not success then
---    nk.logger_error("💥 Ошибка выполнения check_bucket: " .. tostring(err))
---end
+local success, err = pcall(check_bucket)
+if not success then
+    nk.logger_error("💥 Ошибка выполнения check_bucket: " .. tostring(err))
+end

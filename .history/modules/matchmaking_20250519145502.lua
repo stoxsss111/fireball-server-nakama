@@ -15,7 +15,7 @@ function M.create_match()
         player_join_time = 60
     }
 
-    --params.label = nk.json_encode(label_data)
+    params.label = nk.json_encode(label_data)
 
     nk.logger_info("🛠️ Создание нового матча с параметрами: " .. nk.json_encode(params))
     local match_id = nk.match_create(match_module, params)

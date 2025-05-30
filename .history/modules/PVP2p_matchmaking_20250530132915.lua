@@ -21,7 +21,18 @@ local function get_random_users(context, payload)
 end
 
 local function create_match()
-    match_id = nk.match_create(match_module)
+
+    local params = {
+        start_time = os.time(),
+        max_players = 20,
+        team_size = 10,
+        duration = 600,
+        min_players = 10,
+        player_join_time = 60
+    }
+
+    match_id = nk.match_create(match_module, params)
+    nk.logger_info("✅ Матч создан! match_id: " .. match_id .. " 🎉")
     return match_id
 end
 

@@ -21,8 +21,7 @@ local function get_random_users(context, payload)
 end
 
 local function create_match()
-    match_id = nk.match_create(match_module)
-    return match_id
+ 
 end
 
 nk.register_rpc(get_random_users, "get_random_users")

@@ -28,11 +28,18 @@ local function match_join(context, dispatcher, tick, state, presences)
 end
 
 -- Обработка сообщений от клиентов
+local function match_receive(context, dispatcher, tick, state, presence, op_code, data)
+  nk.logger_info("Получено 🙌🙌🙌🙌🙌 сообщение от игрока: ")
+
+  if op_code == 1 then
+       -- nk.logger_info("Получено ❤️❤️❤️❤️❤️❤️ сообщение от игрока: " .. presence.user_id .. " с кодом операции: " .. op_code)
+    end
+  return state
+end
 
 -- Обработка тиков
 local function match_tick(context, dispatcher, tick, state, messages)
 
-  
   return state
 end
 
@@ -52,6 +59,18 @@ local function match_loop(context, dispatcher, tick, state, messages)
         print("🔎 сообщение от игрока:", message.sender.user_id)
         print("💬 опкод:", message.op_code)
         print("📦 данные:", message.data)
+
+        -- Пример: обработка JSON-данных
+        local decoded = nk.decode(message.data)
+        if message.op_code == 1 then
+            -- допустим, пришло сообщение о прыжке
+            state.jumps = state.jumps or {}
+            table.insert(state.jumps, {
+                user_id = message.sender.user_id,
+                time = tick,
+                info = decoded,
+            })
+        end
     end
 
     return state

@@ -28,11 +28,25 @@ local function match_join(context, dispatcher, tick, state, presences)
 end
 
 -- Обработка сообщений от клиентов
+local function match_receive(context, dispatcher, tick, state, presence, op_code, data)
+  nk.logger_info("📨 Получено сообщение от игрока: " .. presence.user_id)
+
+  if op_code == 1 then
+    -- data приходит как бинарный blob (byte[]), его нужно превратить в строку
+    local json_string = nk.binary_to_string(data)
+    nk.logger_info("📦 Данные: " .. json_string)
+
+    -- если ты знаешь, что клиент шлёт JSON, можно сразу декодировать
+    local decoded = nk.json_decode(json_string)
+    nk.logger_info("🔍 Распарсенные данные: " .. decoded.message) -- если в JSON был ключ "message"
+  end
+
+  return state
+end
 
 -- Обработка тиков
 local function match_tick(context, dispatcher, tick, state, messages)
 
-  
   return state
 end
 
@@ -48,15 +62,9 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
-    for _, message in ipairs(messages) do
-        print("🔎 сообщение от игрока:", message.sender.user_id)
-        print("💬 опкод:", message.op_code)
-        print("📦 данные:", message.data)
-    end
 
     return state
 end
-
 
   local function match_signal(context, dispatcher, tick, state, data)
 
@@ -68,6 +76,7 @@ return {
     match_init = match_init,
     match_join_attempt = match_join_attempt,
     match_join = match_join,
+    match_receive = match_receive,
     match_tick = match_tick,
     match_leave = match_leave,
     match_terminate = match_terminate,

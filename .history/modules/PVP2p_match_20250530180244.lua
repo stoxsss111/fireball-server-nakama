@@ -28,11 +28,18 @@ local function match_join(context, dispatcher, tick, state, presences)
 end
 
 -- Обработка сообщений от клиентов
+local function match_receive(context, dispatcher, tick, state, presence, op_code, data)
+  nk.logger_info("Получено 🙌🙌🙌🙌🙌 сообщение от игрока: ")
+
+  if op_code == 1 then
+       -- nk.logger_info("Получено ❤️❤️❤️❤️❤️❤️ сообщение от игрока: " .. presence.user_id .. " с кодом операции: " .. op_code)
+    end
+  return state
+end
 
 -- Обработка тиков
 local function match_tick(context, dispatcher, tick, state, messages)
 
-  
   return state
 end
 
@@ -49,14 +56,18 @@ end
 
 local function match_loop(context, dispatcher, tick, state, messages)
     for _, message in ipairs(messages) do
-        print("🔎 сообщение от игрока:", message.sender.user_id)
-        print("💬 опкод:", message.op_code)
-        print("📦 данные:", message.data)
+        local op_code = message.op_code
+        local data = nk.json_decode(message.data)
+        
+        -- Обработка разных типов операций
+        if op_code == 1 then
+            -- Движение игрока
+            nk.logger_info("🔎🔎🔎🔎🔎🔎🔎Получено сообщение от игрока: " .. data.user_id .. " с кодом операции: " .. op_code)
+        end
     end
-
+    
     return state
 end
-
 
   local function match_signal(context, dispatcher, tick, state, data)
 
@@ -68,6 +79,7 @@ return {
     match_init = match_init,
     match_join_attempt = match_join_attempt,
     match_join = match_join,
+    match_receive = match_receive,
     match_tick = match_tick,
     match_leave = match_leave,
     match_terminate = match_terminate,

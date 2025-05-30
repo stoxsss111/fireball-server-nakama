@@ -1,15 +1,42 @@
 local nk = require("nakama")
 
+
 -- Название матча
 local function match_init(context, params)
-    nk.logger_info("Получено ❤️❤️❤️❤️❤️❤️ сообщение от игрока: ")
+    local now = os.time()
 
-    local state = {}
-    return state, 1, "PVP2p_match" -- <== важно: ТРЕТИЙ аргумент — СТРОКА
+
+local join_time = now  -- или получить значение из другого источника
+local player_count = 0    -- или получить значение из другого источника
+local required_size = 2
+local required_join_time = 60 -- Default value or obtain from another source
+
+local label = nk.json_encode({
+    join_time = join_time,
+    playerCount = player_count,
+    required_size = required_size,
+    required_join_time = required_join_time
+})
+
+    local state = {
+        start_time = params.start_time or now,
+        duration = params.duration,
+        teams = {
+            {players = {}, score = 0},
+            {players = {}, score = 0}
+        },
+        players = {},
+        players_count = 0,
+        bots = {},
+        messages = {}
+
+
+    }
+
+    return state, 1, label -- <== важно: ТРЕТИЙ аргумент — СТРОКА
 end
 
 local function match_join_attempt(context, dispatcher, tick, state, presence, metadata)
-   nk.logger_info("Игрокиииииииииииииии тут📦")
 	-- Presence format:
 	-- {
 	--   user_id = "user unique ID",
@@ -23,16 +50,19 @@ local function match_join_attempt(context, dispatcher, tick, state, presence, me
 
 -- Подтверждение входа игрока
 local function match_join(context, dispatcher, tick, state, presences)
-
+  nk.logger_info("Игрок тут📦" .. #presences)
     return state
 end
 
 -- Обработка сообщений от клиентов
+local function match_receive(context, dispatcher, tick, state, presence, op_code, data)
+
+  return state
+end
 
 -- Обработка тиков
 local function match_tick(context, dispatcher, tick, state, messages)
-
-  
+  state.tick = tick
   return state
 end
 
@@ -48,15 +78,24 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
-    for _, message in ipairs(messages) do
-        print("🔎 сообщение от игрока:", message.sender.user_id)
-        print("💬 опкод:", message.op_code)
-        print("📦 данные:", message.data)
-    end
 
+
+  local elapsed_time = os.time() - state.start_time
+
+
+  local TickData = {
+    total_seconds = state.duration,
+    elapsed_seconds = elapsed_time
+  }
+
+  dispatcher.broadcast_message(1, nk.json_encode(TickData), nil, nil)
+
+  --[Длительность матча]
+    if elapsed_time >= state.duration then
+        return nil  -- Завершаем матч
+    end
     return state
 end
-
 
   local function match_signal(context, dispatcher, tick, state, data)
 
@@ -68,6 +107,7 @@ return {
     match_init = match_init,
     match_join_attempt = match_join_attempt,
     match_join = match_join,
+    match_receive = match_receive,
     match_tick = match_tick,
     match_leave = match_leave,
     match_terminate = match_terminate,

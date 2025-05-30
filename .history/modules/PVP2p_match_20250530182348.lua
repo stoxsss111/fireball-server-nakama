@@ -32,7 +32,23 @@ end
 -- Обработка тиков
 local function match_tick(context, dispatcher, tick, state, messages)
 
-  
+  for _, message in ipairs(messages) do
+        print("🔎 сообщение от игрока:", message.sender.user_id)
+        print("💬 опкод:", message.op_code)
+        print("📦 данные:", message.data)
+
+        -- Пример: обработка JSON-данных
+        local decoded = nk.decode(message.data)
+        if message.op_code == 1 then
+            -- допустим, пришло сообщение о прыжке
+            state.jumps = state.jumps or {}
+            table.insert(state.jumps, {
+                user_id = message.sender.user_id,
+                time = tick,
+                info = decoded,
+            })
+        end
+    end
   return state
 end
 
@@ -48,11 +64,7 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
-    for _, message in ipairs(messages) do
-        print("🔎 сообщение от игрока:", message.sender.user_id)
-        print("💬 опкод:", message.op_code)
-        print("📦 данные:", message.data)
-    end
+    
 
     return state
 end

@@ -7,11 +7,13 @@ local function match_init(context, params)
         players = {
           {
             account = nil,
+            name = nil,
             score = 0,
             color = "#FF6B6B"
           },
           {
             account = nil,
+            name = nil,
             score = 0,
             color = "#4ECDC4"
           }
@@ -61,7 +63,7 @@ end
 local function match_loop(context, dispatcher, tick, state, messages)
     for _, message in ipairs(messages) do
         if message.op_code == 1 then
-           
+            
         end
         print("🔎 сообщение от игрока:", message.sender.user_id)
         print("💬 опкод:", message.op_code)

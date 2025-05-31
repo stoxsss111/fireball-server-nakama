@@ -6,12 +6,14 @@ local function match_init(context, params)
     local state = {
         players = {
           {
-            account = nil,
+            id = nil,
+            name = nil,
             score = 0,
             color = "#FF6B6B"
           },
           {
-            account = nil,
+            id = nil,
+            name = nil,
             score = 0,
             color = "#4ECDC4"
           }
@@ -24,9 +26,12 @@ local function match_init(context, params)
 end
 
 local function match_join_attempt(context, dispatcher, tick, state, presence, metadata)
-  
-  state.players[1].account = nk.account_get_id(metadata.player1_id)
-  state.players[2].account = nk.account_get_id(metadata.player2_id)
+  print("📦 данные1:", metadata.player1_id)
+  print("📦 данные1:", metadata.player2_id)
+
+  state.players[1].id = metadata.player1_id
+  state.players[2].id = metadata.player2_id
+
     
 	-- Presence format:
 	-- {ы
@@ -61,7 +66,7 @@ end
 local function match_loop(context, dispatcher, tick, state, messages)
     for _, message in ipairs(messages) do
         if message.op_code == 1 then
-           
+            
         end
         print("🔎 сообщение от игрока:", message.sender.user_id)
         print("💬 опкод:", message.op_code)

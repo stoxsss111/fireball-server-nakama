@@ -3,31 +3,13 @@ local nk = require("nakama")
 -- Название матча
 local function match_init(context, params)
     nk.logger_info("Получено ❤️❤️❤️❤️❤️❤️ сообщение от игрока: ")
-    local state = {
-        players = {
-          {
-            account = nil,
-            score = 0,
-            color = "#FF6B6B"
-          },
-          {
-            account = nil,
-            score = 0,
-            color = "#4ECDC4"
-          }
-        },
-        currentPlayerIndex = 1, -- в Lua индексы начинаются с 1
-        round = 1,
-        gameStatus = "waiting" -- "waiting", "playing", "paused", "finished"
-      }
+
+    local state = {}
     return state, 1, "PVP2p_match" -- <== важно: ТРЕТИЙ аргумент — СТРОКА
 end
 
 local function match_join_attempt(context, dispatcher, tick, state, presence, metadata)
-  
-  state.players[1].account = nk.account_get_id(metadata.player1_id)
-  state.players[2].account = nk.account_get_id(metadata.player2_id)
-    
+   nk.logger_info("Игрокиииииииииииииии тут📦")
 	-- Presence format:
 	-- {ы
 	--   user_id = "user unique ID",
@@ -60,9 +42,6 @@ end
 
 local function match_loop(context, dispatcher, tick, state, messages)
     for _, message in ipairs(messages) do
-        if message.op_code == 1 then
-           
-        end
         print("🔎 сообщение от игрока:", message.sender.user_id)
         print("💬 опкод:", message.op_code)
         print("📦 данные:", message.data)

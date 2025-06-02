@@ -70,7 +70,7 @@ local function match_loop(context, dispatcher, tick, state, messages)
         100,
         nk.json_encode({time_left = state.match_data.max_time - state.match_data.match_time}),
         nil,
-        nil
+        false
       )
 
     for _, message in ipairs(messages) do

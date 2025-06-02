@@ -31,8 +31,9 @@ end
 
 local function match_join_attempt(context, dispatcher, tick, state, presence, metadata)
   
-  state.players[1].account = nk.account_get_id(metadata.player1_id)
-  state.players[2].account = nk.account_get_id(metadata.player2_id)
+  nk.logger_info(metadata.player2_id)
+  --state.players[1].account = nk.account_get_id(metadata.player1_id)
+  --state.players[2].account = nk.account_get_id(metadata.player2_id)
     
 	-- Presence format:
 	-- {ы
@@ -65,12 +66,12 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
-    state.match_data.match_time = state.match_data.match_time + 1
+    state.match_time = state.match_time + 1
     dispatcher.broadcast_message(
         100,
-        nk.json_encode({time_left = state.match_data.max_time - state.match_data.match_time}),
+        nk.json_encode({time_left = state.max_time - state.match_time}),
         nil,
-        nil
+        false
       )
 
     for _, message in ipairs(messages) do

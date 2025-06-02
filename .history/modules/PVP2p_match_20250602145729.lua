@@ -4,12 +4,6 @@ local nk = require("nakama")
 local function match_init(context, params)
     nk.logger_info("Получено ❤️❤️❤️❤️❤️❤️ сообщение от игрока: ")
     local state = {
-        match_data = {
-          name = "PVP2p_match",
-          description = "Match for 2 players",
-          match_time = 0, -- Максимальное количество игроков в матче
-          max_time = 60 
-        },
         players = {
           {
             account = nil,
@@ -65,13 +59,18 @@ local function match_terminate(context, dispatcher, tick, state, grace_seconds)
 end
 
 local function match_loop(context, dispatcher, tick, state, messages)
-    state.match_data.match_time = state.match_data.match_time + 1
+
+  local response = {
+    text = "👋 Всем привет из матча!",
+    tick = tick
+    }
+
     dispatcher.broadcast_message(
-        100,
-        nk.json_encode({time_left = state.match_data.max_time - state.match_data.match_time}),
-        nil,
-        nil
-      )
+        3, -- op_code
+        nk.json_encode(response),
+        nil, -- nil означает: всем игрокам в матче
+        true -- надёжная доставка
+    )
 
     for _, message in ipairs(messages) do
         if message.op_code == 1 then

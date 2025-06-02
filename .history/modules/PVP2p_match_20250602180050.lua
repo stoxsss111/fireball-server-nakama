@@ -68,9 +68,9 @@ local function match_loop(context, dispatcher, tick, state, messages)
     state.match_data.match_time = state.match_data.match_time + 1
     dispatcher.broadcast_message(
         100,
-        nk.json_encode({time_left = state.match_data.max_time - state.match_data.match_time}),
+        nk.json_encode({time_left = state.max_time - state.match_time}),
         nil,
-        nil
+        false
       )
 
     for _, message in ipairs(messages) do

@@ -97,12 +97,7 @@ local function match_loop(context, dispatcher, tick, state, messages)
 
         if op_code == EOpCode.Player1Fire then
             local decoded = nk.json_decode(data)
-            state.players[1].fire = decoded.Player1Fire
-        end
-
-        if op_code == EOpCode.Player2Fire then
-            local decoded = nk.json_decode(data)
-            state.players[2].fire = decoded.Player2Fire
+            state.players[1].score = decoded.Player2Score
         end
 
     end

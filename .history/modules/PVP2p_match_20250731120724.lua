@@ -4,8 +4,6 @@ EOpCode = {
     TimeLeft = 1,
     Player1Score = 10,
     Player2Score = 20,
-    Player1Fire = 30,
-    Player2Fire = 40,
     Pvp2PMatchEnd = 100
 }
 
@@ -23,13 +21,11 @@ local function match_init(context, params)
         players = {
           {
             account = nil,
-            fire = 0,
             score = 0,
             color = "#FF6B6B"
           },
           {
             account = nil,
-            fire = 0,
             score = 0,
             color = "#4ECDC4"
           }
@@ -88,23 +84,10 @@ local function match_loop(context, dispatcher, tick, state, messages)
         if op_code == EOpCode.Player1Score then
             local decoded = nk.json_decode(data)
             state.players[1].score = decoded.Player1Score
-        end
-
-        if op_code == EOpCode.Player2Score then
+        elseif op_code == EOpCode.Player2Score then
             local decoded = nk.json_decode(data)
             state.players[2].score = decoded.Player2Score
         end
-
-        if op_code == EOpCode.Player1Fire then
-            local decoded = nk.json_decode(data)
-            state.players[1].fire = decoded.Player1Fire
-        end
-
-        if op_code == EOpCode.Player2Fire then
-            local decoded = nk.json_decode(data)
-            state.players[2].fire = decoded.Player2Fire
-        end
-
     end
 
     local time_left = state.match_data.max_time - state.match_data.match_time

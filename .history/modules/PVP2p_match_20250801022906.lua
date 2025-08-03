@@ -23,13 +23,11 @@ local function match_init(context, params)
         players = {
           {
             account = nil,
-            fire = 0,
             score = 0,
             color = "#FF6B6B"
           },
           {
             account = nil,
-            fire = 0,
             score = 0,
             color = "#4ECDC4"
           }
@@ -93,16 +91,6 @@ local function match_loop(context, dispatcher, tick, state, messages)
         if op_code == EOpCode.Player2Score then
             local decoded = nk.json_decode(data)
             state.players[2].score = decoded.Player2Score
-        end
-
-        if op_code == EOpCode.Player1Fire then
-            local decoded = nk.json_decode(data)
-            state.players[1].fire = decoded.Player1Fire
-        end
-
-        if op_code == EOpCode.Player2Fire then
-            local decoded = nk.json_decode(data)
-            state.players[2].fire = decoded.Player2Fire
         end
 
     end

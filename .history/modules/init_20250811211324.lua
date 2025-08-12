@@ -78,24 +78,37 @@ function M.delete_user_data(context, payload)
 end
 
 function M.check_nickname(context, payload)
+    -- 1. Декодируем входящие данные
     local data = nk.json_decode(payload)
-    if not data or not data.nickname or data.nickname == "" then
-        return nil, "Nickname not provided", 3  -- INVALID_ARGUMENT
+    if data == nil or data.nickname == nil or data.nickname == "" then
+        -- Возвращаем ошибку, если никнейм не предоставлен
+        return nk.json_encode({error = "Nickname not provided"}), 400
     end
 
     local nickname = data.nickname
 
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
+    -- 2. Безопасно вызываем функцию Nakama с помощью pcall
+    -- success будет true/false, result будет либо таблицей пользователей, либо сообщением об ошибке
+    local success, result = pcall(nk.users_get_by_display_name, nickname)
 
+    -- 3. Обрабатываем результат вызова
     if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
-        return nil, "Internal server error", 13  -- INTERNAL
+        -- Если pcall вернул false, значит произошла внутренняя ошибка (например, с БД)
+        nk.logger_error("Error in users_get_by_display_name: " .. tostring(result))
+        -- Возвращаем клиенту общую ошибку сервера
+        return nk.json_encode({error = "Internal server error"}), 500
     end
 
-    if #rows > 0 then
+    -- На этом этапе success равен true, а result содержит ответ от nk.users_get_by_display_name
+    -- (который может быть таблицей пользователей или nil/пустой таблицей, если никто не найден)
+    local users = result
+
+    -- 4. Проверяем, найдены ли пользователи
+    if users and #users > 0 then
+        -- Если массив users не пустой, никнейм занят
         return nk.json_encode({ is_unique = false })
     else
+        -- Если users это nil или пустая таблица, никнейм свободен
         return nk.json_encode({ is_unique = true })
     end
 end

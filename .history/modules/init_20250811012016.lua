@@ -7,7 +7,7 @@ function M.setup_account(context, payload)
     local data = nk.json_decode(payload)
     if not data then
         nk.logger_error("Не удалось декодировать payload!")
-        return nk.json_encode({ success = false, error = "Invalid JSON" })
+        return { success = false, error = "Invalid JSON" }
     end
 
     local meta = { is_bot = false }
@@ -38,10 +38,10 @@ function M.setup_account(context, payload)
 
     if not ok then
         nk.logger_error("Ошибка обновления аккаунта: " .. tostring(err))
-        return nk.json_encode({ success = false, error = tostring(err) })
+        return { success = false, error = tostring(err) }
     end
 
-    return nk.json_encode({ success = true, message = "Account created successfully" })
+    return { success = true, message = "Account created successfully" }
 end
 
 
@@ -77,32 +77,8 @@ function M.delete_user_data(context, payload)
     return {success = true}
 end
 
-function M.check_nickname(context, payload)
-    local data = nk.json_decode(payload)
-    if not data or not data.nickname or data.nickname == "" then
-        return nil, "Nickname not provided", 3  -- INVALID_ARGUMENT
-    end
-
-    local nickname = data.nickname
-
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
-
-    if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
-        return nil, "Internal server error", 13  -- INTERNAL
-    end
-
-    if #rows > 0 then
-        return nk.json_encode({ is_unique = false })
-    else
-        return nk.json_encode({ is_unique = true })
-    end
-end
 
 
--- Регистрируем RPC по имени "check_nickname"
-nk.register_rpc(M.check_nickname, "check_nickname")
 nk.register_rpc(M.setup_account, "setup_account")
 nk.register_rpc(M.delete_user_data, "delete_user_data")
 

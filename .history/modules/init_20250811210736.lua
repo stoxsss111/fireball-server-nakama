@@ -79,23 +79,27 @@ end
 
 function M.check_nickname(context, payload)
     local data = nk.json_decode(payload)
-    if not data or not data.nickname or data.nickname == "" then
-        return nil, "Nickname not provided", 3  -- INVALID_ARGUMENT
+    if data == nil or data.nickname == nil then
+        -- Эта проверка остается, но можно добавить более информативное сообщение
+        return nil, 400, "Nickname not provided in payload"
     end
 
     local nickname = data.nickname
 
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
+    -- Ищем пользователей с таким display_name
+    local users, error = pcall(nk.users_get_by_display_name, nickname)
 
-    if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
-        return nil, "Internal server error", 13  -- INTERNAL
+    if error then
+        -- Логируем ошибку, если что-то пошло не так с вызовом функции
+        nk.logger_error("Error getting users by display name: " .. error)
+        return nil, 500, "Internal server error"
     end
 
-    if #rows > 0 then
+    if users and #users > 0 then
+        -- Пользователь с таким display_name уже существует
         return nk.json_encode({ is_unique = false })
     else
+        -- Пользователь с таким display_name не найден, никнейм уникален
         return nk.json_encode({ is_unique = true })
     end
 end

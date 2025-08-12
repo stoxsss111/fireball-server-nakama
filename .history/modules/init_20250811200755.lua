@@ -79,21 +79,16 @@ end
 
 function M.check_nickname(context, payload)
     local data = nk.json_decode(payload)
-    if not data or not data.nickname or data.nickname == "" then
-        return nil, "Nickname not provided", 3  -- INVALID_ARGUMENT
+    if data == nil or data.nickname == nil then
+        return nil, 400, "Nickname not provided"
     end
 
     local nickname = data.nickname
 
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
+    -- Поиск пользователей с таким ником
+    local users = nk.users_list({filter = "display_name = '" .. nickname .. "'"})
 
-    if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
-        return nil, "Internal server error", 13  -- INTERNAL
-    end
-
-    if #rows > 0 then
+    if #users > 0 then
         return nk.json_encode({ is_unique = false })
     else
         return nk.json_encode({ is_unique = true })
@@ -102,7 +97,7 @@ end
 
 
 -- Регистрируем RPC по имени "check_nickname"
-nk.register_rpc(M.check_nickname, "check_nickname")
+nk.register_rpc(check_nickname, "check_nickname")
 nk.register_rpc(M.setup_account, "setup_account")
 nk.register_rpc(M.delete_user_data, "delete_user_data")
 

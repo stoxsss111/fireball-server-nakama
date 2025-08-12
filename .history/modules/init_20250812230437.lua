@@ -85,18 +85,17 @@ function M.check_nickname(context, payload)
 
     local nickname = data.nickname
 
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
+    local success, users = pcall(nk.users_get_by_display_name, nickname)
 
     if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
+        nk.logger_error("Error in users_get_by_display_name: " .. tostring(users))
         return nil, "Internal server error", 13  -- INTERNAL
     end
 
-    if #rows > 0 then
-        return nk.json_encode({ is_unique = false })
+    if users and #users > 0 then
+        return nk.json_encode({ is_unique = false }), nil
     else
-        return nk.json_encode({ is_unique = true })
+        return nk.json_encode({ is_unique = true }), nil
     end
 end
 

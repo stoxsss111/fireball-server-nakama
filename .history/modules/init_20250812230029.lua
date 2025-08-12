@@ -78,24 +78,39 @@ function M.delete_user_data(context, payload)
 end
 
 function M.check_nickname(context, payload)
+    -- 1. Декодируем входящие данные
     local data = nk.json_decode(payload)
-    if not data or not data.nickname or data.nickname == "" then
-        return nil, "Nickname not provided", 3  -- INVALID_ARGUMENT
+    if data == nil or data.nickname == nil or data.nickname == "" then
+        -- ПРАВИЛЬНЫЙ СПОСОБ вернуть ошибку 400 (Bad Request)
+        -- nk.error прерывает выполнение и отправляет клиенту ошибку.
+        -- nk.ERROR_CODE_BAD_REQUEST это константа для кода 13.
+        nk.error("Nickname not provided", nk.ERROR_CODE_BAD_REQUEST)
     end
 
     local nickname = data.nickname
 
-    local query = "SELECT id FROM users WHERE display_name = $1 LIMIT 1"
-    local success, rows = pcall(nk.sql_query, query, {nickname})
+    -- 2. Безопасно вызываем функцию Nakama
+    local success, result = pcall(nk.users_get_by_display_name, nickname)
 
+    -- 3. Обрабатываем результат вызова
     if not success then
-        nk.logger_error("Error in sql_query: " .. tostring(rows))
-        return nil, "Internal server error", 13  -- INTERNAL
+        -- Если pcall завершился с ошибкой, это внутренняя проблема сервера
+        nk.logger_error("Error in users_get_by_display_name: " .. tostring(result))
+        
+        -- ПРАВИЛЬНЫЙ СПОСОБ вернуть ошибку 500 (Internal Server Error)
+        -- nk.ERROR_CODE_INTERNAL это константа для кода 13.
+        nk.error("Internal server error", nk.ERROR_CODE_INTERNAL)
     end
 
-    if #rows > 0 then
+    -- На этом этапе success равен true, а result — это результат выполнения (таблица или nil)
+    local users = result
+
+    -- 4. Проверяем, найдены ли пользователи, и возвращаем ОДНО строковое значение
+    if users and #users > 0 then
+        -- Никнейм занят. Возвращаем JSON-строку.
         return nk.json_encode({ is_unique = false })
     else
+        -- Никнейм свободен. Возвращаем JSON-строку.
         return nk.json_encode({ is_unique = true })
     end
 end
